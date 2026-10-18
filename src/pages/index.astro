@@ -1,0 +1,45 @@
+---
+import Base from '../layouts/Base.astro';
+
+const modules = import.meta.glob('./posts/*.md', { eager: true }) as Record<string, any>;
+
+const posts = Object.entries(modules)
+  .map(([path, mod]) => ({
+    slug: path.replace('./posts/', '').replace(/\.md$/, ''),
+    ...(mod.frontmatter ?? {}),
+  }))
+  .filter((p) => !p.draft)
+  .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
+function fmt(d: any) {
+  const date = d instanceof Date ? d : new Date(d);
+  if (Number.isNaN(date.getTime())) return String(d ?? '');
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+}
+---
+
+<Base title="首页">
+  <section class="hero">
+    <h1>写点能验证的东西</h1>
+    <p>
+      AI 手机、知识库、以及它们到底省了多少时间。<br />
+      尽量给出可复现的过程，而不是感受。
+    </p>
+  </section>
+
+  {posts.length === 0 ? (
+    <p style="color: var(--fg-dim)">还没有发布的文章。第一篇文章正在写。</p>
+  ) : (
+    <ul class="post-list">
+      {posts.map((post) => (
+        <li>
+          <a href={`/posts/${post.slug}/`}>{post.title}</a>
+          <span class="meta">
+            {fmt(post.date)}
+            {post.description && <span> · {post.description}</span>}
+          </span>
+        </li>
+      ))}
+    </ul>
+  )}
+</Base>

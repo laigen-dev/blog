@@ -1,0 +1,14 @@
+# 依赖与构建产物
+node_modules/
+dist/
+.astro/
+
+# 系统垃圾
+Thumbs.db
+.DS_Store
+
+# 本地环境变量与 Wrangler 缓存
+.env
+.env.*
+.wrangler/
+.dev.vars

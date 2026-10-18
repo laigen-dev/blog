@@ -1,0 +1,25 @@
+---
+import Base from './Base.astro';
+
+const { frontmatter } = Astro.props;
+
+function fmt(d: string | Date | undefined) {
+  if (!d) return '';
+  const date = d instanceof Date ? d : new Date(d);
+  if (Number.isNaN(date.getTime())) return String(d);
+  return `${date.getFullYear()} 年 ${date.getMonth() + 1} 月 ${date.getDate()} 日`;
+}
+---
+
+<Base title={frontmatter.title} description={frontmatter.description}>
+  <article>
+    <header>
+      <h1>{frontmatter.title}</h1>
+      <div class="meta">
+        <time datetime={frontmatter.date}>{fmt(frontmatter.date)}</time>
+        {frontmatter.readingTime && <span> · {frontmatter.readingTime}</span>}
+      </div>
+    </header>
+    <slot />
+  </article>
+</Base>
